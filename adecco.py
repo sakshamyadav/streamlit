@@ -1,12 +1,14 @@
-import streamlit as st 
-import numpy as np 
-import pandas as pd 
-
-hide_streamlit_style = """
-            <style>
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+import cv2
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
 
 
+class VideoTransformer(VideoTransformerBase):
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+
+        img = cv2.cvtColor(cv2.Canny(img, 100, 200), cv2.COLOR_GRAY2BGR)
+
+        return img
+
+
+webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
